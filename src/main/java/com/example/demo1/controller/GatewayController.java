@@ -12,5 +12,10 @@ public class GatewayController {
 	public String home() {
 		return "home";
 	}
+	
+	@GetMapping("/check")
+	public String check() {
+		return "checked";
+	}
 
 }
