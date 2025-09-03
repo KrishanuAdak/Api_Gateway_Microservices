@@ -31,12 +31,14 @@ public class GatewayConfig {
 	                        .filters(f -> f.filter(jwtAuthenticationFilter))
 	                        .uri("lb://admin-service"))
 	                
-	                .route("auth-service",r->r.path("auth-service/**")	                		
+	                .route("auth-service",r->r.path("/auth-service/**")	                		
 	                		.uri("lb://auth-service"))
 	                
                      .route("appointment-service",r->r.path("/appointment/**")
                     		 .filters(f -> f.filter(jwtAuthenticationFilter))
 	                        .uri("lb://appointment-service"))
+                     .route("notification",r-> r.path("/notification/**")
+                     .uri("lb://notification-service"))
 	                
 	                
 
