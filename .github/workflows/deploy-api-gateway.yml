@@ -1,16 +1,17 @@
 name: Deploy API Gateway
 
-# Trigger workflow on push to main or master
+# Trigger workflow on push to master
 on:
   push:
-    branches:   master
+    branches: 
+      - master
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout the repository
+    # 1️⃣ Checkout repository
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -46,8 +47,20 @@ jobs:
     - name: Restart Spring Boot service
       run: |
         ssh -i test_key -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-          # Stop previous app (replace myapp with your app name)
-          pkill -f 'java -jar target/*.jar' || echo "No previous app running"
+          APP_NAME="EntryPoint_Gateway-0.0.1-SNAPSHOT.jar"
+          APP_PATH="/root/deploy/$APP_NAME"
+
+          # Stop previous app
+          PID=$(pgrep -f $APP_NAME)
+          if [ -n "$PID" ]; then
+            echo "Stopping old app (PID: $PID)"
+            kill -9 $PID
+          else
+            echo "No previous app running"
+          fi
+
           # Start new app
-          nohup java -jar /root/deploy/*.jar > /root/deploy/app.log 2>&1 &
+          echo "Starting new app..."
+          nohup java -jar $APP_PATH --server.port=9000 --server.address=0.0.0.0 > /root/deploy/app.log 2>&1 &
+          echo "App started."
         EOF
