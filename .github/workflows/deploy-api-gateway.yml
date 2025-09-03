@@ -43,14 +43,14 @@ jobs:
         source: "target/EntryPoint_Gateway-0.0.1-SNAPSHOT.jar"
         target: "/root/deploy/"
 
-    # 6️⃣ Restart Spring Boot on VPS
-    - name: Restart Spring Boot app
+    # 6️⃣ Restart Spring Boot on VPS with memory limits
+    - name: Restart Spring Boot service
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        script_stop: true
+        port: 22
         script: |
           APP_NAME="EntryPoint_Gateway-0.0.1-SNAPSHOT.jar"
           APP_PATH="/root/deploy/$APP_NAME"
@@ -65,10 +65,11 @@ jobs:
             echo "No old app running"
           fi
 
-          echo "Starting new app..."
-          nohup java -Xmx512m -jar $APP_PATH --server.port=9000 --server.address=0.0.0.0 > $LOG_FILE 2>&1 &
+          echo "Starting new app with memory limits..."
+          # Limit JVM memory to prevent OOM kills
+          nohup java -Xms256m -Xmx512m -jar $APP_PATH --server.port=9000 --server.address=0.0.0.0 > $LOG_FILE 2>&1 &
 
-          echo "Waiting 5s for app to boot..."
+          echo "Waiting 5 seconds for app to boot..."
           sleep 5
 
           echo "Checking running process:"
