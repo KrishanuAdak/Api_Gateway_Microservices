@@ -18,7 +18,7 @@ public class GatewayController {
 		return "checked";
 	}
 	
-	@GetMapping("/test-once")
+	@GetMapping("/test") 
 	public String test() {
 		return "Tested Properly";
 		
