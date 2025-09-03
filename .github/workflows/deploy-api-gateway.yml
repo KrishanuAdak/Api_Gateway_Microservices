@@ -3,7 +3,7 @@ name: Deploy API Gateway
 on:
   push:
     branches:
-      - main   # runs when you push to main branch
+      - master   # runs when you push to main branch
 
 jobs:
   build-and-deploy:
