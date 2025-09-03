@@ -13,7 +13,7 @@ public class GatewayController {
 		return "home";
 	}
 	
-	@GetMapping("/checked")
+	@GetMapping("/checked-new")
 	public String check() {
 		return "checked";
 	}
